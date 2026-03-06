@@ -1,91 +1,9 @@
 import { useState } from "react";
+import config from "./scorecard.config.json";
 
-const LEVELS = [
-  {
-    name: "Beginner",
-    range: [0, 3],
-    color: "#7A8B69",
-    bg: "#EDF2EA",
-    border: "#C4D2B8",
-    description: "First steps — getting familiar with what Claude can do",
-  },
-  {
-    name: "Explorer",
-    range: [4, 8],
-    color: "#5A8FA8",
-    bg: "#E4EFF5",
-    border: "#A8CDE0",
-    description: "Curious and experimenting — trying features and building habits",
-  },
-  {
-    name: "Practitioner",
-    range: [9, 15],
-    color: "#8B6BAE",
-    bg: "#EDE4F5",
-    border: "#C5AFDB",
-    description: "Claude is part of the daily toolkit — confident and consistent use",
-  },
-  {
-    name: "Expert",
-    range: [16, 23],
-    color: "#B8752C",
-    bg: "#F8EDDF",
-    border: "#E2BC8E",
-    description: "Deep fluency — shaping how Claude works, not just using it",
-  },
-  {
-    name: "Champion",
-    range: [24, 40],
-    color: "#C43B3B",
-    bg: "#FCEAEA",
-    border: "#E8A8A8",
-    description: "Building team infrastructure — making everyone else better with AI",
-  },
-];
-
-const MILESTONES = [
-  // Beginner
-  { id: 1, text: "Asked Claude a question and used the answer in their work", tier: 0, points: 1, category: "Basics" },
-  { id: 2, text: "Used Claude to draft or revise written content (email, doc, message)", tier: 0, points: 1, category: "Basics" },
-  { id: 3, text: "Uploaded a file or image for Claude to analyse or work with", tier: 0, points: 1, category: "Basics" },
-  { id: 4, text: "Iterated on a response — gave feedback, asked follow-ups, or corrected Claude", tier: 0, points: 1, category: "Basics" },
-
-  // Explorer
-  { id: 5, text: "Used Claude to summarise or extract key points from a long document", tier: 1, points: 1, category: "Workflow" },
-  { id: 6, text: "Wrote a structured prompt with explicit context, constraints, or examples", tier: 1, points: 1, category: "Prompting" },
-  { id: 7, text: "Used Claude to prepare for a meeting, presentation, or decision", tier: 1, points: 1, category: "Workflow" },
-  { id: 8, text: "Connected and actively used an integration (Slack, Drive, Gmail, Calendar)", tier: 1, points: 1, category: "Integrations" },
-  { id: 9, text: "Used web search or deep research mode to gather current information", tier: 1, points: 1, category: "Workflow" },
-
-  // Practitioner
-  { id: 10, text: "Uses Claude as part of their daily workflow — not just occasionally", tier: 2, points: 1, category: "Workflow" },
-  { id: 11, text: "Used built-in skills to create a document, spreadsheet, or presentation", tier: 2, points: 1, category: "Skills" },
-  { id: 12, text: "Built an interactive artifact or small app with Claude", tier: 2, points: 2, category: "Building" },
-  { id: 13, text: "Set up a Project with custom instructions to tailor Claude for a recurring task", tier: 2, points: 1, category: "Customisation" },
-  { id: 14, text: "Used Claude to analyse data and produce charts, dashboards, or visual outputs", tier: 2, points: 1, category: "Building" },
-  { id: 15, text: "Completed a multi-step workflow across tools (e.g. research → doc → email)", tier: 2, points: 2, category: "Workflow" },
-
-  // Expert
-  { id: 16, text: "Modified system instructions or custom context to meaningfully change Claude's behaviour", tier: 3, points: 2, category: "Customisation" },
-  { id: 17, text: "Used the Anthropic API directly (via SDK, curl, or Claude Code)", tier: 3, points: 2, category: "Technical" },
-  { id: 18, text: "Built a multi-file application or tool with Claude's assistance", tier: 3, points: 2, category: "Building" },
-  { id: 19, text: "Used MCP (Model Context Protocol) servers to connect Claude to external services", tier: 3, points: 2, category: "Technical" },
-  { id: 20, text: "Debugged a failing interaction by adjusting prompts, context, or architecture", tier: 3, points: 1, category: "Prompting" },
-  { id: 21, text: "Identified and implemented a use case that saved measurable time", tier: 3, points: 1, category: "Impact" },
-
-  // Champion
-  { id: 22, text: "Written and published a custom skill for the team to use in Claude", tier: 4, points: 3, category: "Infrastructure" },
-  { id: 23, text: "Deployed a Claude-powered tool or app to Vercel for team or external access", tier: 4, points: 3, category: "Infrastructure" },
-  { id: 24, text: "Created or modified the team onboarding process to include AI adoption training", tier: 4, points: 2, category: "Leadership" },
-  { id: 25, text: "Built and maintained a shared prompt library or template repository for the org", tier: 4, points: 2, category: "Leadership" },
-  { id: 26, text: "Set up a CI/CD pipeline incorporating Claude (e.g. Claude Code in GitHub Actions)", tier: 4, points: 3, category: "Infrastructure" },
-  { id: 27, text: "Ran a workshop, lunch-and-learn, or training session on Claude for colleagues", tier: 4, points: 2, category: "Leadership" },
-  { id: 28, text: "Configured and managed MCP servers or integrations at the organisation level", tier: 4, points: 3, category: "Infrastructure" },
-  { id: 29, text: "Measured and reported on AI adoption metrics or ROI for their team", tier: 4, points: 2, category: "Impact" },
-  { id: 30, text: "Contributed to an internal SDK, wrapper, or abstraction layer over the Anthropic API", tier: 4, points: 3, category: "Infrastructure" },
-];
-
-const CATEGORIES = ["All", "Basics", "Workflow", "Prompting", "Integrations", "Skills", "Building", "Customisation", "Technical", "Infrastructure", "Leadership", "Impact"];
+const LEVELS = config.levels;
+const MILESTONES = config.milestones;
+const CATEGORIES = ["All", ...Array.from(new Set(MILESTONES.map((m) => m.category)))];
 
 const CheckIcon = () => (
   <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
